@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" lang="en">
 <head>
     <!-- Required meta tags -->
     <meta charset="utf-8">
@@ -26,7 +26,7 @@
                     </h2>
                     <h3 class="h2 mb-2">Oops! You're lost.</h3>
                     <p class="mb-5">The page you are looking for was not found.</p>
-                    <a class="btn bsb-btn-5xl btn-dark rounded-pill px-5 fs-6 m-0" href="/index.html" role="button">Back to Home</a>
+                    <a class="btn bsb-btn-5xl btn-dark rounded-pill px-5 fs-6 m-0" th:href="@{/}" role="button">Back to Home</a>
                 </div>
             </div>
         </div>

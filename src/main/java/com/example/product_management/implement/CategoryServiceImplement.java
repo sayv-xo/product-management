@@ -1,7 +1,8 @@
-package com.example.product_management.service;
+package com.example.product_management.implement;
 
 import com.example.product_management.model.Category;
 import com.example.product_management.repository.CategoryRepository;
+import com.example.product_management.service.CategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -13,8 +14,6 @@ import java.util.Optional;
 
 @Service
 public class CategoryServiceImplement implements CategoryService {
-    //private List<Category> categories = new ArrayList<>();
-    private int nextId = 1;
 
     @Autowired
     private CategoryRepository categoryRepository;
@@ -26,7 +25,6 @@ public class CategoryServiceImplement implements CategoryService {
 
     @Override
     public void createCategory(Category category) {
-        category.setCategoryID(nextId++);
         categoryRepository.save(category);
     }
 
