@@ -109,3 +109,5 @@ The system supports pagination for product listings, allowing users to navigate 
 5. Push to the branch (`git push origin feature/your-feature`).
 6. Create a new Pull Request.
 
+
+### Video Demonstration on [Loom](https://www.loom.com/share/596e6d69325745ddaf02eb3f8c2ccbcb?sid=77780225-4e5f-43f5-8479-80835801b241)
