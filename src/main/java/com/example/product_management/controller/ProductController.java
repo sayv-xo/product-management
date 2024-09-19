@@ -28,6 +28,16 @@ public class ProductController {
         return new ResponseEntity<>(products, HttpStatus.OK);
     }
 
+    @GetMapping("/public/products/{productID}")
+    public ResponseEntity<Product> getProduct(@PathVariable int productID) {
+        try {
+            Product product = productService.getProductById(productID);
+            return new ResponseEntity<>(product, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/admin/products")
     public ResponseEntity<String> createProduct(@RequestBody Product product) {
         productService.createProduct(product);

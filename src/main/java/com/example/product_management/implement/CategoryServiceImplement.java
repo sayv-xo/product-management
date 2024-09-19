@@ -40,6 +40,13 @@ public class CategoryServiceImplement implements CategoryService {
     }
 
     @Override
+    public Category getCategoryById(int categoryID) {
+        Optional<Category> category = categoryRepository.findById(categoryID);
+        if (category.isPresent()) return category.get();
+        else throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Category not found");
+    }
+
+    @Override
     public Category updateCategory(Category category, int categoryID) {
         List<Category> categories = categoryRepository.findAll();
 

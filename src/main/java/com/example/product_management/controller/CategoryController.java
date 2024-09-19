@@ -22,6 +22,16 @@ public class CategoryController {
         return new ResponseEntity<>(categories, HttpStatus.OK);
     }
 
+    @GetMapping("/public/categories/{categoryID}")
+    public ResponseEntity<Category> getCategory(@PathVariable int categoryID) {
+        try {
+            Category category = categoryService.getCategoryById(categoryID);
+            return new ResponseEntity<>(category, HttpStatus.OK);
+        } catch (ResponseStatusException e) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+    }
+
     @PostMapping("/admin/categories")
     public ResponseEntity<String> createCategory(@RequestBody Category category) {
         categoryService.createCategory(category);

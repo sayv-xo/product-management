@@ -9,4 +9,6 @@ public interface CategoryService {
     void createCategory(Category category);
     String deleteCategory(int categoryID);
     Category updateCategory(Category category, int categoryID);
+
+    Category getCategoryById(int categoryID);
 }
