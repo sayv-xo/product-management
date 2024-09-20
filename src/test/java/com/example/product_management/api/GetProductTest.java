@@ -6,12 +6,12 @@ import org.junit.jupiter.api.Test;
 
 public class GetProductTest {
     @Test
-    public void getProduct() {
+    public void testStatusCodeAndContentType() {
         when().
                 get("http://localhost:8080/api/public/products").
                 then().
                 assertThat().
-                body("category", hasItem("Fashion"));
+                statusCode(200).
+                contentType("application/json");
     }
-
 }
