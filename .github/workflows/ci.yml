@@ -31,7 +31,7 @@ jobs:
           java-version: '21'
 
       - name: Install dependencies
-        run: mvn install
+        run: mvn clean install
 
       - name: Set up MySQL
         run: |
