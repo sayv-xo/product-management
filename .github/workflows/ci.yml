@@ -39,7 +39,15 @@ jobs:
 
       - name: Start backend service
         run: |
-          nohup java -jar target/product-management-0.0.1-SNAPSHOT.war & sleep 30
+          nohup java -jar target/product-management-0.0.1-SNAPSHOT.war &
+          # Wait for the service to be ready
+          for i in {1..30}; do
+            if curl -s http://localhost:8080/api/public/products; then
+              break
+            fi
+            echo "Waiting for backend service to start..."
+            sleep 5
+          done
 
       - name: Run Tests
         run: mvn test -Dtest.port=8080
