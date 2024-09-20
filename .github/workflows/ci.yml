@@ -25,7 +25,7 @@ jobs:
 
       - name: Create ecomm_db database
         run: |
-          mysql -uroot -pxoxo -e "CREATE DATABASE IF NOT EXISTS ecomm_db;"
+          mysql -uroot -proot -e "CREATE DATABASE IF NOT EXISTS ecomm_db;"
 
       - name: Build with Maven
         run: mvn clean install -DskipTests
