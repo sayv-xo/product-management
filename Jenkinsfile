@@ -19,9 +19,16 @@ pipeline {
         }
 
         stage('Start MySQL Service') {
-            steps {
-                bat 'net start MySQL84'
-            }
+                    steps {
+                        script {
+                            def serviceStatus = bat(script: 'sc query MySQL84', returnStatus: true)
+                            if (serviceStatus == 0) {
+                                echo "MySQL84 service is already running. Skipping start."
+                            } else {
+                                bat 'net start MySQL84'
+                            }
+                        }
+                    }
         }
 
         stage('Start Backend Service') {
