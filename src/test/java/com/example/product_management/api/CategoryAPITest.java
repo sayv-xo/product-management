@@ -4,11 +4,10 @@ import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
 
 import io.restassured.RestAssured;
-import io.restassured.response.Response;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 
-public class GetProductTest {
+@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
+public class CategoryAPITest {
 
     @BeforeAll
     public static void setUp() {
@@ -16,6 +15,7 @@ public class GetProductTest {
     }
 
     @Test
+    @Order(1)
     public void testCreateCategory() {
         String categoryName = "New Category";
 
@@ -41,6 +41,7 @@ public class GetProductTest {
     }
 
     @Test
+    @Order(2)
     public void testGetCategory() {
         when().
                 get("/api/public/categories").
@@ -49,5 +50,30 @@ public class GetProductTest {
                 statusCode(200).
                 contentType("application/json").
                 body("categoryName", hasItem(equalTo("New Category")));
+    }
+
+    @Test
+    @Order(3)
+    public void testUpdateCategory() {
+        String categoryName = "New Category";
+        String updatedCategoryName = "Change Category";
+        String requestBody = "{ \"categoryName\": \"" + updatedCategoryName + "\" }";
+
+        int categoryID = given()
+                .when()
+                .get("/api/public/categories")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("find { it.categoryName == '" + categoryName + "' }.categoryID");
+
+
+        given()
+                .contentType("application/json")
+                .body("{\"categoryID\":" + categoryID + ", \"categoryName\":\"" + updatedCategoryName + "\"}")
+                .when()
+                .put("/api/admin/categories/" + categoryID)
+                .then()
+                .statusCode(200);
     }
 }
