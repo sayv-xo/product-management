@@ -28,7 +28,7 @@ pipeline {
         stage('Start Backend Service') {
             steps {
                 sh '''
-                    nohup java -jar target/Products-0.0.1-SNAPSHOT.jar & sleep 30
+                    nohup java -jar target/product-management-0.0.1-SNAPSHOT.war & sleep 30
                 '''
             }
         }
