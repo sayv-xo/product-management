@@ -76,4 +76,25 @@ public class CategoryAPITest {
                 .then()
                 .statusCode(200);
     }
+
+    @Test
+    @Order(4)
+    public void testDeleteCategory() {
+        String categoryName = "Change Category";
+
+        int categoryID = given()
+                .when()
+                .get("/api/public/categories")
+                .then()
+                .statusCode(200)
+                .extract()
+                .path("find { it.categoryName == '" + categoryName + "' }.categoryID");
+
+
+        given()
+                .when()
+                .delete("/api/admin/categories/" + categoryID)
+                .then()
+                .statusCode(200);
+    }
 }
