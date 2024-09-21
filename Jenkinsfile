@@ -35,7 +35,6 @@ pipeline {
             steps {
                 bat '''
                     start /B java -jar target/product-management-0.0.1-SNAPSHOT.war
-                    ping 127.0.0.1 -n 30 > nul
                 '''
             }
         }
