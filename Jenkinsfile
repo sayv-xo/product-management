@@ -66,7 +66,7 @@ pipeline {
                     subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
                     body: body,
                     to: 'savegawugah01@gmail.com',
-                    from: 'jenkins@example.com',
+                    from: 'savegawugah01@gmail.com',
                     replyTo: 'jenkins@example.com',
                     mimeType: 'text/html',
                     attachmentsPattern: 'target/surefire-reports/*.xml'
