@@ -21,7 +21,6 @@ pipeline {
         stage('Start MySQL Service') {
             steps {
                 bat 'net start MySQL84'
-                bat 'mysql -u root -pxoxo -e "CREATE DATABASE IF NOT EXISTS ecomm_db;"'
             }
         }
 
