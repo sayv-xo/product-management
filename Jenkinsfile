@@ -67,7 +67,7 @@ pipeline {
                     body: body,
                     to: 'savegawugah01@gmail.com',
                     from: 'savegawugah01@gmail.com',
-                    replyTo: 'jenkins@example.com',
+                    replyTo: 'jenkin@example.com',
                     mimeType: 'text/html',
                     attachmentsPattern: 'target/surefire-reports/*.xml'
                 )
