@@ -1,77 +1,113 @@
 pipeline {
     agent any
 
+    environment {
+        SMTP_CREDS = credentials('mail-cred')
+    }
+
+    tools {
+        maven 'Maven 3.9.8'
+    }
 
     stages {
         stage('Checkout') {
             steps {
-                checkout scm
+                git url: 'https://github.com/sayv-xo/product-management.git', branch: 'master'
             }
         }
 
-        stage('Install Dependencies') {
+        stage('Build and Test') {
             steps {
-                bat 'mvn clean install -DskipTests'
+                bat 'mvn clean test'
             }
         }
 
-        stage('Start MySQL Service') {
-                    steps {
-                        script {
-                            def serviceStatus = bat(script: 'sc query MySQL84', returnStatus: true)
-                            if (serviceStatus == 0) {
-                                echo "MySQL84 service is already running. Skipping start."
-                            } else {
-                                bat 'net start MySQL84'
-                            }
-                        }
-                    }
-        }
-
-        stage('Start Backend Service') {
+        stage('Generate Reports') {
             steps {
-                bat '''
-                    start /B java -jar target/product-management-0.0.1-SNAPSHOT.war
-                '''
-            }
-        }
-
-        stage('Run Tests') {
-            steps {
-                bat 'mvn test'
+                bat 'mvn surefire-report:report'
+                bat 'mvn site'
             }
         }
     }
 
     post {
         always {
-            junit 'target/surefire-reports/*.xml'
+            junit '**/target/surefire-reports/*.xml'
+
+            publishHTML(target: [
+                allowMissing: false,
+                alwaysLinkToLastBuild: false,
+                keepAll: true,
+                reportDir: 'target/site',
+                reportFiles: 'surefire-report.html',
+                reportName: 'HTML Test Report'
+            ])
+        }
+        success {
+            echo 'Build successful!'
             script {
-                def jobName = env.JOB_NAME
-                def buildNumber = env.BUILD_NUMBER
-                def pipelineStatus = currentBuild.result ?: 'UNKNOWN'
-                def bannerColor = pipelineStatus.toUpperCase() == 'SUCCESS' ? 'green' : 'red'
-                def body = """
-                <html>
-                <body>
-                <div style="border: 4px solid ${bannerColor}; padding: 10px;">
-                <h2>${jobName} - Build ${buildNumber}</h2>
-                <div style="background-color: ${bannerColor}; padding: 10px;">
-                <h3 style="color: white;">Pipeline Status: ${pipelineStatus.toUpperCase()}</h3>
-                </div>
-                <p>Check the <a href="${env.BUILD_URL}">console output</a>.</p>
-                </div>
-                </body>
-                </html>
-                """
                 emailext (
-                    subject: "${jobName} - Build ${buildNumber} - ${pipelineStatus.toUpperCase()}",
-                    body: body,
+                    subject: "SUCCESS: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                    body: """<table style="border: 2px solid green; border-collapse: collapse; width: 100%;">
+                        <tr style="background-color: #4CAF50; color: white;">
+                            <th style="padding: 10px; text-align: left;">Status</th>
+                            <th style="padding: 10px; text-align: left;">Job</th>
+                            <th style="padding: 10px; text-align: left;">Build</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; color: green; font-weight: bold;">SUCCESS</td>
+                            <td style="padding: 10px;">${env.JOB_NAME}</td>
+                            <td style="padding: 10px;">${env.BUILD_NUMBER}</td>
+                        </tr>
+                    </table>
+                    <p>Check <a href='${env.BUILD_URL}'>console output</a></p>
+                    <p>View <a href='${env.BUILD_URL}HTML_20Test_20Report/'>HTML Test Report</a></p>""",
                     to: 'savegawugah01@gmail.com',
                     from: 'savegawugah01@gmail.com',
-                    replyTo: 'jenkins@example.com',
+                    replyTo: 'savegawugah01@gmail.com',
                     mimeType: 'text/html',
-                    attachmentsPattern: 'target/surefire-reports/*.xml'
+                    attachmentsPattern: '**/target/site/surefire-report.html',
+                    compressLog: true,
+                    auth: true,
+                    smtpServer: 'smtp.gmail.com',
+                    smtpPort: '465',
+                    useSsl: true,
+                    username: '$SMTP_CREDS_USR',
+                    password: '$SMTP_CREDS_PSW'
+                )
+            }
+        }
+        failure {
+            echo 'Build failed'
+            script {
+                emailext (
+                    subject: "FAILED: Job '${env.JOB_NAME} [${env.BUILD_NUMBER}]'",
+                    body: """<table style="border: 2px solid red; border-collapse: collapse; width: 100%;">
+                        <tr style="background-color: #F44336; color: white;">
+                            <th style="padding: 10px; text-align: left;">Status</th>
+                            <th style="padding: 10px; text-align: left;">Job</th>
+                            <th style="padding: 10px; text-align: left;">Build</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; color: red; font-weight: bold;">FAILED</td>
+                            <td style="padding: 10px;">${env.JOB_NAME}</td>
+                            <td style="padding: 10px;">${env.BUILD_NUMBER}</td>
+                        </tr>
+                    </table>
+                    <p>Check <a href='${env.BUILD_URL}'>console output</a></p>
+                    <p>View <a href='${env.BUILD_URL}HTML_20Test_20Report/'>HTML Test Report</a></p>""",
+                    to: 'savegawugah01@gmail.com',
+                    from: 'savegawugah01@gmail.com',
+                    replyTo: 'savegawugah01@gmail.com',
+                    mimeType: 'text/html',
+                    attachmentsPattern: '**/target/site/surefire-report.html',
+                    compressLog: true,
+                    auth: true,
+                    smtpServer: 'smtp.gmail.com',
+                    smtpPort: '465',
+                    useSsl: true,
+                    username: '$SMTP_CREDS_USR',
+                    password: '$SMTP_CREDS_PSW'
                 )
             }
         }
