@@ -37,6 +37,7 @@ public class CategoryAPITest {
                 then().
                 assertThat().
                 statusCode(200).
+                log().body().
                 contentType("application/json");
     }
 
