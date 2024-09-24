@@ -33,7 +33,7 @@ public class CategoryAPITest {
     @Test
     public void testStatusCodeAndContentType() {
         when().
-                get("/api/public/products").
+                get("/api/public/categories").
                 then().
                 assertThat().
                 statusCode(200).
